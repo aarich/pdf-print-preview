@@ -58,9 +58,19 @@ export async function renderSpread(
   for (const idx of pageIndices) {
     const pageData = state.pages[idx];
     try {
+      const pageWrapper = document.createElement('div');
+      pageWrapper.className = 'page-wrapper';
+
       const canvas = await renderPageToCanvas(pageData, 1.0);
       canvas.classList.add('spread-page');
-      container.appendChild(canvas);
+      pageWrapper.appendChild(canvas);
+
+      const pageNum = document.createElement('div');
+      pageNum.className = 'page-number';
+      pageNum.textContent = `Page ${idx + 1}`;
+      pageWrapper.appendChild(pageNum);
+
+      container.appendChild(pageWrapper);
     } catch (error) {
       console.error(`Error rendering page ${idx}:`, error);
     }

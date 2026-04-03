@@ -1,4 +1,5 @@
 import { renderPageToCanvas } from './renderer';
+import { scrollToThumbnail } from './thumbnail-view';
 import type { AppState } from './types';
 
 // Display scale for preview - lower = faster rendering, still looks good on screen
@@ -142,6 +143,12 @@ async function renderSpread(
     pageNum.className = 'page-number';
     pageNum.textContent = `Page ${leftPageIdx + 1}`;
     leftPageWrapper.appendChild(pageNum);
+
+    leftPageWrapper.dataset.index = String(leftPageIdx);
+    leftPageWrapper.style.cursor = 'pointer';
+    leftPageWrapper.addEventListener('click', () => {
+      scrollToThumbnail(leftPageIdx as number);
+    });
   }
 
   pagesContainer.appendChild(leftPageWrapper);
@@ -162,6 +169,12 @@ async function renderSpread(
     pageNum.className = 'page-number';
     pageNum.textContent = `Page ${rightPageIdx + 1}`;
     rightPageWrapper.appendChild(pageNum);
+
+    rightPageWrapper.dataset.index = String(rightPageIdx);
+    rightPageWrapper.style.cursor = 'pointer';
+    rightPageWrapper.addEventListener('click', () => {
+      scrollToThumbnail(rightPageIdx);
+    });
   } else {
     // Leave empty wrapper for spacing
     rightPageWrapper.classList.add('page-empty');
@@ -171,4 +184,18 @@ async function renderSpread(
 
   spreadDiv.appendChild(pagesContainer);
   container.appendChild(spreadDiv);
+}
+
+export function scrollToSpreadPage(index: number): void {
+  const container = document.getElementById('spread-container');
+  if (!container) return;
+
+  const pageWrapper = container.querySelector(
+    `.page-wrapper[data-index="${index}"]`,
+  ) as HTMLElement;
+  if (pageWrapper) {
+    pageWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    pageWrapper.classList.add('highlight-flash');
+    setTimeout(() => pageWrapper.classList.remove('highlight-flash'), 2500);
+  }
 }

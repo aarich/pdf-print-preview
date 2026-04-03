@@ -408,6 +408,25 @@ body {
   transition: width 0.2s ease;
 }
 
+@keyframes highlight-fade {
+  0% {
+    outline: 4px solid #f00;
+    outline-offset: 2px;
+    background-color: rgba(0, 0, 128, 0.2);
+    z-index: 10;
+  }
+  100% {
+    outline: 0px solid transparent;
+    outline-offset: 0px;
+    background-color: transparent;
+  }
+}
+
+.highlight-flash {
+  animation: highlight-fade 2.5s ease-out;
+  position: relative;
+}
+
 @media (max-width: 768px) {
   #thumbnail-panel {
     width: 150px;

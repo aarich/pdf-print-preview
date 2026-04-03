@@ -1,5 +1,6 @@
 import { renderPageToCanvas } from './renderer';
 import { insertBlankPage, deletePage } from './page-manager';
+import { scrollToSpreadPage } from './print-preview';
 import type { AppState } from './types';
 
 let state: AppState | null = null;
@@ -36,6 +37,10 @@ export async function renderThumbnails(): Promise<void> {
 
     const thumbnailWrapper = document.createElement('div');
     thumbnailWrapper.className = 'thumbnail-wrapper';
+    thumbnailWrapper.style.cursor = 'pointer';
+    thumbnailWrapper.addEventListener('click', () => {
+      scrollToSpreadPage(i);
+    });
 
     try {
       const canvas = await renderPageToCanvas(pageData, 0.3);
@@ -110,4 +115,18 @@ function handleInsert(position: number): void {
 function handleDelete(position: number): void {
   deletePage(position);
   if (onUpdate) onUpdate();
+}
+
+export function scrollToThumbnail(index: number): void {
+  const container = document.getElementById('thumbnail-list');
+  if (!container) return;
+
+  const item = container.querySelector(
+    `.thumbnail-item[data-index="${index}"]`,
+  ) as HTMLElement;
+  if (item) {
+    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    item.classList.add('highlight-flash');
+    setTimeout(() => item.classList.remove('highlight-flash'), 2500);
+  }
 }
